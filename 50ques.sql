@@ -64,6 +64,8 @@ INSERT INTO Title(Worker_Ref_ID, Work_Title, Affected_From) VALUES
 	(6, 'Manager', '03-05-20'),
 	(7, 'Lead of Deev', '03-05-20'),
 	(8, 'CFO', '03-05-20');
+    
+select * from title;
 
 
 -- @@@@@@@@@@@@@@@@@@@@@@@@@@ MOST IMPORTANT SQL QUESTIONS FOR INTERVIEWS @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -81,7 +83,7 @@ SELECT department from worker GROUP BY department;
 SELECT substring(first_name, 1, 3) from worker;
 
 -- Q-5. Write an SQL query to find the position of the alphabet (‘j’) in the first name column ‘Rajat’ from Worker table.
-SELECT instr(first_name, 'j') from worker where first_name = 'Rajat';
+SELECT instr(first_name, 'j') from worker where first_name = 'Rajat'; -- 1 BASED INDEXING
 
 -- Q-6. Write an SQL query to print the FIRST_NAME from Worker table after removing white spaces from the right side.
 select RTRIM(first_name) from worker;
@@ -91,6 +93,7 @@ SELECT rtrim(first_name) from worker;
 
 -- Q-8. Write an SQL query that fetches the unique values of DEPARTMENT from Worker table and prints its length.
 SELECT distinct department, length(department) from worker;
+SELECT department, count(department) from worker group by department;
 
 -- Q-9. Write an SQL query to print the FIRST_NAME from Worker table after replacing ‘a’ with ‘A’.
 SELECT first_name, replace(first_name, 'a', 'A') from worker;
@@ -132,6 +135,7 @@ SELECT * FROM worker where YEAR(Joining_Date) = 2001 AND MONTH(Joining_Date) = 1
 
 -- Q-21. Write an SQL query to fetch the count of employees working in the department ‘Admin’.
 SELECT department, count(department) as EmployeesAdmin from worker where department = 'Admin';
+SELECT department, count(department) from worker group by department having department = 'Admin';
 
 -- Q-22. Write an SQL query to fetch worker full names with salaries >= 50000 and <= 100000.
 SELECT CONCAT(First_Name, ' ', Last_Name) AS COMPLETE_NAME FROM worker where
@@ -181,8 +185,8 @@ select * from worker order by salary DESC LIMIT 5;
 select * from worker order by salary DESC LIMIT 4,1;
 
 -- Q-34. Write an SQL query to determine the 5th highest salary without using LIMIT keyword.
-select * from worker as w1
-where 5 = (select count(distinct (w2.salary)) from worker as w2
+SELECT * from worker w1
+where 5 = (SELECT count(distinct w2.salary) from worker w2
 where w2.salary >= w1.salary);
  
 -- Q-35. Write an SQL query to fetch the list of employees with the same salary.
@@ -241,11 +245,14 @@ select * from worker LIMIT 3,5;
 select w.First_Name, w.Department, w.Salary from (select Department, max(Salary) as maxsal from worker group by Department) temp
 INNER JOIN worker w ON temp.maxsal = w.Salary and temp.Department = w.Department;
 
+select w.First_Name, w.Department, w.Salary from worker w inner join (select Department, max(Salary) maxsal from worker group by department) temp
+ON temp.maxsal = w.Salary AND temp.Department = w.Department;
+
 
 -- Q-46. Write an SQL query to fetch three max salaries from a table using co-related subquery
-select distinct salary from worker w1 where 
-3 >= (select count(distinct salary) from worker w2
-where w2.salary >= w1.salary) order by w1.salary desc;
+-- select distinct salary from worker w1 where 
+-- 3 >= (select count(distinct salary) from worker w2
+-- where w2.salary >= w1.salary) order by w1.salary desc;
 
 -- DRY RUN AFTER REVISING THE CORELATED SUBQUERY CONCEPT FROM LEC-9.
 select distinct salary from worker order by salary desc limit 3;
@@ -265,16 +272,3 @@ select Department, sum(Salary) as deptsal from worker group by Department order 
 
 -- Q-50. Write an SQL query to fetch the names of workers who earn the highest salary.
 select First_Name, Salary from worker where Salary IN (select max(Salary) from worker);
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-
